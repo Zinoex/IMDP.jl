@@ -12,6 +12,15 @@ IntervalMDP.construct_workspace(
     max_actions = 1,
 ) where {R, VR, MR <: AbstractGPUMatrix{R}} = CuDenseWorkspace(max_actions)
 
+struct CuOrthogonalDenseWorkspace <: AbstractCuWorkspace
+    max_actions::Int32
+end
+
+IntervalMDP.construct_workspace(
+    prob::OrthogonalIntervalProbabilities{N, <:IntervalProbabilities{R, VR, MR}},
+    max_actions = 1,
+) where {N, R, VR, MR <: AbstractGPUMatrix{R}, } = CuOrthogonalDenseWorkspace(max_actions)
+
 ####################
 # Sparse workspace #
 ####################

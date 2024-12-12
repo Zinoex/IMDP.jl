@@ -865,8 +865,8 @@ end
     @test all(V_ortho .≥ reshape(V_direct, 6, 6))
 end
 
-# 3-D abstraction
-@testset "3D abstraction" begin
+# 3-D random
+@testset "3D random" begin
     rng = MersenneTwister(995)
 
     prob_lower = [rand(rng, Float64, 3, 27) ./ 3.0 for _ in 1:3]
