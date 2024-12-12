@@ -45,6 +45,13 @@ using Random: MersenneTwister
     Vres = bellman(V, prob; upper_bound = true)
     Vres = Vector(Vres)
     @test Vres ≈ [0.3 * 4 + 0.7 * 10, 0.5 * 5 + 0.3 * 6 + 0.2 * 7]
+
+    ws = construct_workspace(prob)
+    strategy_cache = construct_strategy_cache(prob, NoStrategyConfig())
+    Vres = similar(V, 2)
+    bellman!(ws, strategy_cache, Vres, V, prob; upper_bound = true)
+    Vres = Vector(Vres)
+    @test Vres ≈ [0.3 * 4 + 0.7 * 10, 0.5 * 5 + 0.3 * 6 + 0.2 * 7]
 end
 
 #### Minimization
@@ -65,6 +72,13 @@ end
     V = IntervalMDP.cu(collect(1.0:15.0))
 
     Vres = bellman(V, prob; upper_bound = false)
+    Vres = Vector(Vres)
+    @test Vres ≈ [0.5 * 1 + 0.3 * 4 + 0.2 * 10, 0.6 * 5 + 0.3 * 6 + 0.1 * 7]
+
+    ws = construct_workspace(prob)
+    strategy_cache = construct_strategy_cache(prob, NoStrategyConfig())
+    Vres = similar(V, 2)
+    bellman!(ws, strategy_cache, Vres, V, prob; upper_bound = false)
     Vres = Vector(Vres)
     @test Vres ≈ [0.5 * 1 + 0.3 * 4 + 0.2 * 10, 0.6 * 5 + 0.3 * 6 + 0.1 * 7]
 end

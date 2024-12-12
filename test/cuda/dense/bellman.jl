@@ -27,6 +27,13 @@ using IntervalMDP, SparseArrays, CUDA
     Vres = bellman(V, prob; upper_bound = true)
     Vres = Vector(Vres)
     @test Vres ≈ [0.3 * 2 + 0.7 * 3, 0.5 * 1 + 0.3 * 2 + 0.2 * 3]
+
+    ws = construct_workspace(prob)
+    strategy_cache = construct_strategy_cache(prob, NoStrategyConfig())
+    Vres = similar(V, 2)
+    bellman!(ws, strategy_cache, Vres, V, prob; upper_bound = true)
+    Vres = Vector(Vres)
+    @test Vres ≈ [0.3 * 2 + 0.7 * 3, 0.5 * 1 + 0.3 * 2 + 0.2 * 3]
 end
 
 #### Minimization
@@ -41,6 +48,13 @@ end
     V = IntervalMDP.cu([1.0, 2.0, 3.0])
 
     Vres = bellman(V, prob; upper_bound = false)
+    Vres = Vector(Vres)
+    @test Vres ≈ [0.5 * 1 + 0.3 * 2 + 0.2 * 3, 0.6 * 1 + 0.3 * 2 + 0.1 * 3]
+
+    ws = construct_workspace(prob)
+    strategy_cache = construct_strategy_cache(prob, NoStrategyConfig())
+    Vres = similar(V, 2)
+    bellman!(ws, strategy_cache, Vres, V, prob; upper_bound = false)
     Vres = Vector(Vres)
     @test Vres ≈ [0.5 * 1 + 0.3 * 2 + 0.2 * 3, 0.6 * 1 + 0.3 * 2 + 0.1 * 3]
 end
