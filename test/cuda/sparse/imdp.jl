@@ -140,3 +140,12 @@ end
     @test k == 10
     @test all(V_fixed_it1 .<= V_fixed_it2)
 end
+
+# Infinite time reward
+@testset "infinite time reward" begin
+    prop = IntervalMDP.cu(InfiniteTimeReward([2.0, 1.0, 0.0], 0.9, 1e-6))
+    spec = Specification(prop, Pessimistic, Maximize)
+    problem = Problem(mdp, spec)
+    V_conv, _, u = value_iteration(problem)
+    @test maximum(u) <= 1e-6
+end

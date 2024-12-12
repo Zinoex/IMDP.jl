@@ -21,7 +21,7 @@ using Random: MersenneTwister
     V = IntervalMDP.cu(collect(1.0:15.0))
 
     Vres = bellman(V, prob; upper_bound = true)
-    Vres = Vector(Vres)
+    Vres = IntervalMDP.cpu(Vres)
     @test Vres ≈ [0.3 * 4 + 0.7 * 10, 0.5 * 5 + 0.3 * 6 + 0.2 * 7]
 
     # To GPU first
@@ -43,14 +43,14 @@ using Random: MersenneTwister
     V = IntervalMDP.cu(collect(1.0:15.0))
 
     Vres = bellman(V, prob; upper_bound = true)
-    Vres = Vector(Vres)
+    Vres = IntervalMDP.cpu(Vres)
     @test Vres ≈ [0.3 * 4 + 0.7 * 10, 0.5 * 5 + 0.3 * 6 + 0.2 * 7]
 
     ws = construct_workspace(prob)
     strategy_cache = construct_strategy_cache(prob, NoStrategyConfig())
     Vres = similar(V, 2)
     bellman!(ws, strategy_cache, Vres, V, prob; upper_bound = true)
-    Vres = Vector(Vres)
+    Vres = IntervalMDP.cpu(Vres)
     @test Vres ≈ [0.3 * 4 + 0.7 * 10, 0.5 * 5 + 0.3 * 6 + 0.2 * 7]
 end
 
@@ -72,14 +72,14 @@ end
     V = IntervalMDP.cu(collect(1.0:15.0))
 
     Vres = bellman(V, prob; upper_bound = false)
-    Vres = Vector(Vres)
+    Vres = IntervalMDP.cpu(Vres)
     @test Vres ≈ [0.5 * 1 + 0.3 * 4 + 0.2 * 10, 0.6 * 5 + 0.3 * 6 + 0.1 * 7]
 
     ws = construct_workspace(prob)
     strategy_cache = construct_strategy_cache(prob, NoStrategyConfig())
     Vres = similar(V, 2)
     bellman!(ws, strategy_cache, Vres, V, prob; upper_bound = false)
-    Vres = Vector(Vres)
+    Vres = IntervalMDP.cpu(Vres)
     @test Vres ≈ [0.5 * 1 + 0.3 * 4 + 0.2 * 10, 0.6 * 5 + 0.3 * 6 + 0.1 * 7]
 end
 
@@ -125,7 +125,7 @@ end
             sample_sparse_interval_probabilities(rng, n, m, nnz_per_column)
 
         V_cpu = bellman(V, prob; upper_bound = false)
-        V_gpu = Vector(bellman(cuda_V, cuda_prob; upper_bound = false))
+        V_gpu = IntervalMDP.cpu(bellman(cuda_V, cuda_prob; upper_bound = false))
 
         @test V_cpu ≈ V_gpu
     end
@@ -141,7 +141,7 @@ end
             sample_sparse_interval_probabilities(rng, n, m, nnz_per_column)
 
         V_cpu = bellman(V, prob; upper_bound = false)
-        V_gpu = Vector(bellman(cuda_V, cuda_prob; upper_bound = false))
+        V_gpu = IntervalMDP.cpu(bellman(cuda_V, cuda_prob; upper_bound = false))
 
         @test V_cpu ≈ V_gpu
     end
@@ -157,7 +157,7 @@ end
             sample_sparse_interval_probabilities(rng, n, m, nnz_per_column)
 
         V_cpu = bellman(V, prob; upper_bound = false)
-        V_gpu = Vector(bellman(cuda_V, cuda_prob; upper_bound = false))
+        V_gpu = IntervalMDP.cpu(bellman(cuda_V, cuda_prob; upper_bound = false))
 
         @test V_cpu ≈ V_gpu
     end
@@ -173,7 +173,7 @@ end
             sample_sparse_interval_probabilities(rng, n, m, nnz_per_column)
 
         V_cpu = bellman(V, prob; upper_bound = false)
-        V_gpu = Vector(bellman(cuda_V, cuda_prob; upper_bound = false))
+        V_gpu = IntervalMDP.cpu(bellman(cuda_V, cuda_prob; upper_bound = false))
 
         @test V_cpu ≈ V_gpu
     end

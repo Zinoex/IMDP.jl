@@ -48,11 +48,12 @@ prop = FiniteTimeReachability([3], 10)
 spec = Specification(prop, Pessimistic, Maximize)
 problem = Problem(mdp, spec)
 policy, V, k, res = control_synthesis(problem)
+cpu_policy = IntervalMDP.cpu(policy)
 
-@test policy isa TimeVaryingStrategy
-@test time_length(policy) == 10
-for k in 1:time_length(policy)
-    @test Vector(policy[k]) == [1, 2, 1]
+@test cpu_policy isa TimeVaryingStrategy
+@test time_length(cpu_policy) == 10
+for k in 1:time_length(cpu_policy)
+    @test cpu_policy[k] == [1, 2, 1]
 end
 
 # Check if the value iteration for the IMDP with the policy applied is the same as the value iteration for the original IMDP
@@ -67,10 +68,11 @@ spec = Specification(prop, Pessimistic, Maximize)
 problem = Problem(mdp, spec)
 
 policy, V, k, res = control_synthesis(problem)
+cpu_policy = IntervalMDP.cpu(policy)
 
-@test time_length(policy) == 10
-for k in 1:time_length(policy)
-    @test Vector(policy[k]) == [2, 2, 1]
+@test time_length(cpu_policy) == 10
+for k in 1:time_length(cpu_policy)
+    @test cpu_policy[k] == [2, 2, 1]
 end
 
 # Check if the value iteration for the IMDP with the policy applied is the same as the value iteration for the original IMDP
@@ -97,15 +99,16 @@ prop = FiniteTimeSafety([3], 10)
 spec = Specification(prop, Pessimistic, Maximize)
 problem = Problem(mdp, spec)
 policy, V, k, res = control_synthesis(problem)
+cpu_policy = IntervalMDP.cpu(policy)
 
 @test all(V .>= 0.0)
 @test CUDA.@allowscalar(V[3]) ≈ 0.0
 
-@test policy isa TimeVaryingStrategy
-@test time_length(policy) == 10
-for k in 1:(time_length(policy) - 1)
-    @test Vector(policy[k]) == [2, 2, 1]
+@test cpu_policy isa TimeVaryingStrategy
+@test time_length(cpu_policy) == 10
+for k in 1:(time_length(cpu_policy) - 1)
+    @test cpu_policy[k] == [2, 2, 1]
 end
 
 # The last time step (aka. the first value iteration step) has a different strategy.
-@test Vector(policy[time_length(policy)]) == [2, 1, 1]
+@test cpu_policy[time_length(cpu_policy)] == [2, 1, 1]

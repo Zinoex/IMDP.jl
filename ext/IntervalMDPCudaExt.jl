@@ -10,8 +10,7 @@ using IntervalMDP, LinearAlgebra
 
 Adapt.@adapt_structure IntervalProbabilities
 Adapt.@adapt_structure OrthogonalIntervalProbabilities
-Adapt.@adapt_structure StationaryStrategy
-Adapt.@adapt_structure TimeVaryingStrategy
+Adapt.@adapt_structure MixtureIntervalProbabilities
 
 # Opinionated conversion to GPU with Float64 values and Int32 indices
 IntervalMDP.cu(model) = adapt(IntervalMDP.CuModelAdaptor{Float64}, model)
@@ -91,6 +90,27 @@ end
 
 Adapt.adapt_structure(T::Type{<:IntervalMDP.CuModelAdaptor}, is::AllStates) = is
 Adapt.adapt_structure(T::Type{<:IntervalMDP.CpuModelAdaptor}, is::AllStates) = is
+
+Adapt.@adapt_structure StationaryStrategy
+
+function Adapt.adapt_structure(
+    T::Type{<:IntervalMDP.CpuModelAdaptor},
+    strategy::TimeVaryingStrategy,
+)
+    return TimeVaryingStrategy(
+        map(s -> adapt(Array{Int32}, s), strategy.strategy),
+    )
+end
+
+function Adapt.adapt_structure(
+    T::Type{<:IntervalMDP.CuModelAdaptor},
+    strategy::TimeVaryingStrategy,
+)
+    return TimeVaryingStrategy(
+        map(s -> adapt(CuArray{Int32}, s), strategy.strategy),
+    )
+end
+
 
 include("cuda/utils.jl")
 include("cuda/array.jl")

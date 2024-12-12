@@ -218,7 +218,7 @@ end
 
         ws = IntervalMDP.DenseOrthogonalWorkspace(prob, 1)
         strategy_cache = construct_strategy_cache(prob, NoStrategyConfig())
-        Vres = similar(Vres)
+        Vres = similar(Vres_first)
         bellman!(ws, strategy_cache, Vres, V, prob; upper_bound = false)
         @test Vres ≈ Vres_first
 

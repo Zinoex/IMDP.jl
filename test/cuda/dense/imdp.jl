@@ -139,6 +139,10 @@ end
 end
 
 # Infinite time reward
-# problem = Problem(mdp, InfiniteTimeReward([2.0, 1.0, 0.0], 0.9, 1e-6))
-# V_conv, _, u = value_iteration(problem; maximize = true, upper_bound = false)
-# @test maximum(u) <= 1e-6
+@testset "infinite time reward" begin
+    prop = IntervalMDP.cu(InfiniteTimeReward([2.0, 1.0, 0.0], 0.9, 1e-6))
+    spec = Specification(prop, Pessimistic, Maximize)
+    problem = Problem(mdp, spec)
+    V_conv, _, u = value_iteration(problem)
+    @test maximum(u) <= 1e-6
+end
